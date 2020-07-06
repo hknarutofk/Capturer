@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include "detectwidgets.h"
+#include "logging.h"
 
 GifCapturer::GifCapturer(QWidget * parent)
     : Selector(parent)
@@ -39,11 +40,12 @@ void GifCapturer::setup()
     temp_palette_path_ = temp_dir + QDir::separator() + "Capturer_palette_" + current_time_str_ + ".png";
 
 #ifdef __linux__
+    QString display = QProcessEnvironment::systemEnvironment().value("DISPLAY");
     args << "-video_size"   << QString("%1x%2").arg(selected_area.width()).arg(selected_area.height())
          << "-framerate"    << QString("%1").arg(framerate_)
          << "-f"            << "x11grab"
-         << "-i"            << QString(":0.0+%1x%2").arg(selected_area.x()).arg(selected_area.y())
-         << temp_video_path_;
+         << "-i"            << QString("%1+%2,%3").arg(display).arg(selected_area.x()).arg(selected_area.y())
+         << temp_video_path_;    
 #elif _WIN32
     args << "-f"            << "gdigrab"
          << "-framerate"    << QString("%1").arg(framerate_)
@@ -53,14 +55,17 @@ void GifCapturer::setup()
          << "-i"            << "desktop"
          << temp_video_path_;
 #endif
+    LOG(DEBUG) << args;
     process_->start("ffmpeg", args);
+
 }
 
 void GifCapturer::exit()
 {
     process_->write("q\n\r");
 
-    process_->waitForFinished();
+    bool result = process_->waitForFinished();
+    LOG(DEBUG) << result;
     QStringList args;
     args << "-y"
          << "-i"    << temp_video_path_
@@ -75,6 +80,7 @@ void GifCapturer::exit()
          << "-filter_complex" << QString("fps=%1,paletteuse").arg(fps_)
          << filename_;
 
+    LOG(DEBUG) << args;
     process_->start("ffmpeg", args);
 
     record_menu_->stop();
