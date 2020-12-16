@@ -135,11 +135,11 @@ void ImageWindow::contextMenuEvent(QContextMenuEvent *)
 {
     QMenu *menu = new QMenu(this);
 
-    auto copy = new QAction(tr("Copy image"));
+    auto copy = new QAction(tr("Copy image"), nullptr);
     menu->addAction(copy);
     connect(copy, &QAction::triggered, this, &ImageWindow::copy);
 
-    auto paste = new QAction(tr("Paste image"));
+    auto paste = new QAction(tr("Paste image"), nullptr);
     menu->addAction(paste);
     connect(paste, &QAction::triggered, this, &ImageWindow::paste);
 
@@ -151,25 +151,25 @@ void ImageWindow::contextMenuEvent(QContextMenuEvent *)
 
 //    });
 
-    auto open = new QAction(tr("Open image..."));
+    auto open = new QAction(tr("Open image..."), nullptr);
     menu->addAction(open);
     connect(open, &QAction::triggered, this, &ImageWindow::open);
 
-    auto save = new QAction(tr("Save as..."));
+    auto save = new QAction(tr("Save as..."), nullptr);
     menu->addAction(save);
     connect(save, &QAction::triggered, this, &ImageWindow::saveAs);
 
     menu->addSeparator();
 
-    auto zoom = new QAction(tr("Zoom: ") + QString::number(static_cast<int>(scale_ * 100)) + "%");
+    auto zoom = new QAction(tr("Zoom: ") + QString::number(static_cast<int>(scale_ * 100)) + "%", nullptr);
     menu->addAction(zoom);
 
-    auto opacity = new QAction(tr("Opacity: ") + QString::number(static_cast<int>(opacity_ * 100)) + "%");
+    auto opacity = new QAction(tr("Opacity: ") + QString::number(static_cast<int>(opacity_ * 100)) + "%", nullptr);
     menu->addAction(opacity);
 
     menu->addSeparator();
 
-    auto close = new QAction(tr("Close"));
+    auto close = new QAction(tr("Close"), nullptr);
     menu->addAction(close);
     connect(close,SIGNAL(triggered(bool)),this,SLOT(close()));
 
